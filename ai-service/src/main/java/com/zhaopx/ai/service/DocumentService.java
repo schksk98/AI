@@ -6,5 +6,5 @@ package com.zhaopx.ai.service;
  * @Date: 2026-03-17 10:08
  */
 public interface DocumentService {
-    void doReadDocument(String path);
+    void doReadDocument(String path) throws Exception;
 }

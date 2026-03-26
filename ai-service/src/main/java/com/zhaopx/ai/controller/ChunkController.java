@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+
 /**
  * @Description
  * @Author: ZhaoPengXiang
@@ -30,8 +32,16 @@ public class ChunkController {
     }
 
     @GetMapping("/doReadDocument")
-    public R<Object> doReadDocument(@RequestParam("path") String path) {
-        documentService.doReadDocument(path);
-        return R.success();
+    public R<Object> doReadDocument(@RequestParam("path") String path) throws Exception {
+        try {
+            documentService.doReadDocument(path);
+            return R.success();
+        } catch (FileNotFoundException fe) {
+            log.error("文件：{}，不存在", path);
+            return R.fail(path + "文件不存在");
+        } catch (Exception e) {
+            log.error("系统异常：{}", e.getMessage(), e);
+            return R.fail("其他错误");
+        }
     }
 }

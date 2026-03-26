@@ -20,8 +20,8 @@ import java.util.List;
 @Service
 public class DocumentServiceImpl implements DocumentService {
 
-    // @Autowired
-    // private VectorStore vectorStore;
+    @Autowired
+    private VectorStore vectorStore;
 
     @Override
     public void doReadDocument(String path) {
@@ -36,7 +36,7 @@ public class DocumentServiceImpl implements DocumentService {
         List<Document> documentsList = recursiveCharacterTextSplitter.apply(documents);
 
         // 3、存向量库
-        // vectorStore.add(documentsList);
+        vectorStore.add(documentsList);
 
         log.info("处理完成");
     }

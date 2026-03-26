@@ -23,14 +23,28 @@ spring:
     username: elastic
     password: ElasticSearch_Zhaopx
   ai:
+    # 明确启用 Dashscope chat model（避免不同版本自动配置差异）
+    model:
+      chat: dashscope
     dashscope:
       api-key: 'sk-209d07b636164a9cba5a1e040256c137'
+      # chat 模型需要单独配置可用的 model 名称；不同账号对不同模型权限不同
+      chat:
+        api-key: 'sk-209d07b636164a9cba5a1e040256c137'
+        options:
+          model: qwen-turbo
       embedding:
         options:
           model: text-embedding-v3
     vectorstore:
       elasticsearch:
         initialize-schema: true
-        index-name: custom-index
-        dimensions: 1536
+        # 与 Dashscope text-embedding-v3 的实际输出维度对齐（否则写入会报 dense_vector 维度不匹配）
+        index-name: custom-index-1024
+        dimensions: 1024
         similarity: cosine
+
+# Dashscope embedding 单次请求限制（<=10）
+document:
+  embedding:
+    batch-size: 10

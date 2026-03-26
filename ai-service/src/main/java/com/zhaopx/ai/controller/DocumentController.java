@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 @Slf4j
 @RestController
 @RequestMapping("/chunk")
-public class ChunkController {
+public class DocumentController {
 
     @Autowired
     private ChunkService chunkService;

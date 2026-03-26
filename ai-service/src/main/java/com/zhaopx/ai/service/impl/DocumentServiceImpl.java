@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -22,6 +23,12 @@ import java.util.List;
 @Slf4j
 @Service
 public class DocumentServiceImpl implements DocumentService {
+    /**
+     * Dashscope embedding 接口限制：batch size 不能超过 10。
+     * 允许通过配置覆盖：document.embedding.batch-size
+     */
+    @Value("${document.embedding.batch-size:10}")
+    private int embeddingBatchSize;
 
     @Autowired
     private VectorStore vectorStore;
@@ -64,9 +71,22 @@ public class DocumentServiceImpl implements DocumentService {
         RecursiveCharacterTextSplitter recursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(500);
         List<Document> documentsList = recursiveCharacterTextSplitter.apply(documents);
 
-        // 3、存向量库
-        vectorStore.add(documentsList);
-
+        if (documentsList == null || documentsList.isEmpty()) {
+            log.info("文档分段结果为空，跳过向量入库");
+            return;
+        }
+        // 3、存向量库（embedding 接口对一次入参 texts 数量有限制）
+        int batchSize = Math.max(1, Math.min(embeddingBatchSize, 10));
+        int total = documentsList.size();
+        int batchCount = (total + batchSize - 1) / batchSize;
+        // 分批次入库
+        for (int batchIndex = 0; batchIndex < batchCount; batchIndex++) {
+            int from = batchIndex * batchSize;
+            int to = Math.min(from + batchSize, total);
+            List<Document> batch = documentsList.subList(from, to);
+            log.info("开始向量入库批次 {}/{} (size={}, batchSize={})", batchIndex + 1, batchCount, batch.size(), batchSize);
+            vectorStore.add(batch);
+        }
         log.info("处理完成");
     }
 }

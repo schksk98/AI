@@ -29,7 +29,7 @@ public class ChunkController {
         return R.success();
     }
 
-    @GetMapping
+    @GetMapping("/doReadDocument")
     public R<Object> doReadDocument(@RequestParam("path") String path) {
         documentService.doReadDocument(path);
         return R.success();

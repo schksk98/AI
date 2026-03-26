@@ -19,7 +19,7 @@ logging:
     path: logs
 spring:
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://182.92.236.254:19200
     username: elastic
     password: ElasticSearch_Zhaopx
   ai:

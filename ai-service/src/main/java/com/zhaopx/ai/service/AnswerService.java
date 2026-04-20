@@ -1,5 +1,6 @@
 package com.zhaopx.ai.service;
 
+import com.zhaopx.ai.bean.req.KnowledgeAnswerRequest;
 import reactor.core.publisher.Flux;
 
 /**
@@ -9,4 +10,6 @@ import reactor.core.publisher.Flux;
  */
 public interface AnswerService {
     Flux<String> myQuestion(String question);
+
+    Flux<String> ask(KnowledgeAnswerRequest request);
 }

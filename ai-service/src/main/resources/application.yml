@@ -46,5 +46,13 @@ spring:
 
 # Dashscope embedding 单次请求限制（<=10）
 document:
+  chunk:
+    size: 500
   embedding:
     batch-size: 10
+search:
+  hybrid:
+    top-k: 5
+    num-candidates: 30
+    rank-constant: 60
+    rank-window-size: 100
